@@ -3,6 +3,8 @@ package main
 import (
 	"go-wordle/algorithms"
 	"go-wordle/correctness"
+	"strconv"
+	"strings"
 
 	"bufio"
 	"log"
@@ -36,7 +38,7 @@ func play(answer string, guesser algorithms.Guesser) int {
 func dictionary() map[string]int {
 	dict := make(map[string]int)
 
-	file, err := os.Open("input.txt")
+	file, err := os.Open("input2.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +48,19 @@ func dictionary() map[string]int {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		dict[line] = 1
+
+		fields := strings.Fields(line)
+		if len(fields) != 2 {
+			log.Fatal("Every line is word + space + count")
+		}
+
+		word := fields[0]
+		count, err := strconv.Atoi(fields[1])
+		if err != nil {
+			log.Fatal("Every count is a number")
+		}
+
+		dict[word] = count
 	}
 
 	if err := scanner.Err(); err != nil {

@@ -1,9 +1,5 @@
 package correctness
 
-import (
-	"log"
-)
-
 type Correctness uint8
 
 const (
@@ -13,14 +9,6 @@ const (
 )
 
 func Check(answer string, guess string) [5]Correctness {
-	if len(answer) != 5 {
-		log.Fatalf("Invalid length for answer:%s length:%d expected:%d\r\n", answer, len(answer), 5)
-	}
-
-	if len(guess) != 5 {
-		log.Fatalf("Invalid length for guess:%s length:%d expected:%d\r\n", guess, len(guess), 5)
-	}
-
 	var correctness [5]Correctness
 	var used [5]bool
 
@@ -55,10 +43,15 @@ func Check(answer string, guess string) [5]Correctness {
 	return correctness
 }
 
+var cachedPatterns [][5]Correctness = nil
+
 func Patterns() [][5]Correctness {
-	patterns := make([][5]Correctness, 0, 243)
+	if cachedPatterns != nil {
+		return cachedPatterns
+	}
 
 	values := [3]Correctness{Correct, Misplaced, Wrong}
+	patterns := make([][5]Correctness, 0, 243)
 
 	for i0 := 0; i0 < 3; i0++ {
 		for i1 := 0; i1 < 3; i1++ {
@@ -79,5 +72,6 @@ func Patterns() [][5]Correctness {
 		}
 	}
 
-	return patterns
+	cachedPatterns = patterns
+	return cachedPatterns
 }
